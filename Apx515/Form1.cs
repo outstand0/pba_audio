@@ -54,10 +54,13 @@ namespace Apx515
         public double gConfigLimitUpperBalance;
 
         public double gMeasureValueLevelLeft;
+        public double gMeasureValueLevelSub;
         public double gMeasureValueLevelRight;
         public double gMeasureValueSnrLeft;
+        public double gMeasureValueSnrSub;
         public double gMeasureValueSnrRight;
         public double gMeasureValueThdLeft;
+        public double gMeasureValueThdSub;
         public double gMeasureValueThdRight;
         public double gMeasureValueBalance;
 
@@ -86,6 +89,7 @@ namespace Apx515
         public string[] gConfigFrequencyLimitUpper = new string[20];
         public double[] gMeasureValueSweepLeft = new double[20];
         public double[] gMeasureValueSweepRight = new double[20];
+        public double[] gMeasureValueSweepSub = new double[20];
         public bool[] gNgFreq = new bool[20];
 
 
@@ -448,14 +452,18 @@ namespace Apx515
             // clear measurement values
             gMeasureValueLevelLeft = 0.000;
             gMeasureValueLevelRight = 0.000;
+            gMeasureValueLevelSub = 0.000;
             gMeasureValueSnrLeft = 0.000;
             gMeasureValueSnrRight = 0.000;
+            gMeasureValueSnrSub = 0.000;
             gMeasureValueThdLeft = 0.000;
             gMeasureValueThdRight = 0.000;
+            gMeasureValueThdSub = 0.000;
             gMeasureValueBalance = 0.000;
 
             gMeasureValueSweepLeft.Initialize();
             gMeasureValueSweepRight.Initialize();
+            gMeasureValueSweepSub.Initialize();
 
             // clear screen
             if (pictureBox1.Image != null)
@@ -701,18 +709,39 @@ namespace Apx515
 
             if (measureName == "Level and Gain")
             {
-                gMeasureValueLevelLeft = meterValues[0];
-                //gMeasureValueLevelRight = meterValues[1];
+                if (sigPathName == "main_mic")
+                {
+                    gMeasureValueLevelLeft = meterValues[0];
+                    //gMeasureValueLevelRight = meterValues[1];
+                }
+                else if (sigPathName == "sub_mic")
+                {
+                    gMeasureValueLevelSub = meterValues[0];
+                }
             }
             else if (measureName == "THD+N")
             {
-                gMeasureValueThdLeft = meterValues[0];
-                //gMeasureValueThdRight = meterValues[1];
+                if (sigPathName == "main_mic")
+                {
+                    gMeasureValueThdLeft = meterValues[0];
+                    //gMeasureValueThdRight = meterValues[1];
+                }
+                else if (sigPathName == "sub_mic")
+                {
+                    gMeasureValueThdSub = meterValues[0];
+                }
             }
             else if (measureName == "Signal to Noise Ratio")
             {
-                gMeasureValueSnrLeft = meterValues[0];
-                //gMeasureValueSnrRight = meterValues[1];
+                if(sigPathName == "main_mic")
+                {
+                    gMeasureValueSnrLeft = meterValues[0];
+                    //gMeasureValueSnrRight = meterValues[1];
+                }
+                else if(sigPathName == "sub_mic")
+                {
+                    gMeasureValueSnrSub = meterValues[0];
+                }
             }
 
             for (int i = 0; i < meterValues.Length; i++)
@@ -818,7 +847,7 @@ namespace Apx515
                 for (int i = 0; i < gCountFrequencyPoint; i++) // find nearst frequency and get measured value
                 {
                     nearest_freq = FindSweepPointIndex(XValues_Left, Convert.ToDouble(gFrequencyPoint[i]));
-                    gMeasureValueSweepRight[i] = MeasureValueSweepLeft[i] = YValues_Left[nearest_freq];
+                    gMeasureValueSweepSub[i] = MeasureValueSweepLeft[i] = YValues_Left[nearest_freq];
                     //gMeasureValueSweepRight[i] = MeasureValueSweepRight[i] = YValues_Right[nearest_freq];
 
                     dataGridView2.Rows[i].Cells[sweepResultPosition].Value = MeasureValueSweepLeft[i].ToString("F3");
@@ -959,42 +988,84 @@ namespace Apx515
             {
                 if (checkLogSubItem(seq.Meas.Name))
                 {
-                    if (seq.Meas.Name == "Level and Gain")
+                    if (seq.Path.Name == "main_mic")
                     {
-                        sw.Write(gMeasureValueLevelLeft.ToString("F3") + "\t");
-                        //sw.Write(gMeasureValueLevelRight.ToString("F3") + "\t");
+                        if (seq.Meas.Name == "Level and Gain")
+                        {
+                            sw.Write(gMeasureValueLevelLeft.ToString("F3") + "\t");
+                            //sw.Write(gMeasureValueLevelRight.ToString("F3") + "\t");
+                        }
+                        else if (seq.Meas.Name == "THD+N")
+                        {
+                            sw.Write(gMeasureValueThdLeft.ToString("F3") + "\t");
+                            //sw.Write(gMeasureValueThdRight.ToString("F3") + "\t");
+                        }
+                        else if (seq.Meas.Name == "Signal to Noise Ratio")
+                        {
+                            sw.Write(gMeasureValueSnrLeft.ToString("F3") + "\t");
+                            //sw.Write(gMeasureValueSnrRight.ToString("F3") + "\t");
+                        }
                     }
-                    else if (seq.Meas.Name == "THD+N")
+                    else if (seq.Path.Name == "sub_mic")
                     {
-                        sw.Write(gMeasureValueThdLeft.ToString("F3") + "\t");
-                        //sw.Write(gMeasureValueThdRight.ToString("F3") + "\t");
+                        if (seq.Meas.Name == "Level and Gain")
+                        {
+                            sw.Write(gMeasureValueLevelSub.ToString("F3") + "\t");
+                            //sw.Write(gMeasureValueLevelRight.ToString("F3") + "\t");
+                        }
+                        else if (seq.Meas.Name == "THD+N")
+                        {
+                            sw.Write(gMeasureValueThdSub.ToString("F3") + "\t");
+                            //sw.Write(gMeasureValueThdRight.ToString("F3") + "\t");
+                        }
+                        else if (seq.Meas.Name == "Signal to Noise Ratio")
+                        {
+                            sw.Write(gMeasureValueSnrSub.ToString("F3") + "\t");
+                            //sw.Write(gMeasureValueSnrRight.ToString("F3") + "\t");
+                        }
                     }
-                    else if (seq.Meas.Name == "Signal to Noise Ratio")
-                    {
-                        sw.Write(gMeasureValueSnrLeft.ToString("F3") + "\t");
-                        //sw.Write(gMeasureValueSnrRight.ToString("F3") + "\t");
-                    }
-                    
                 }
                 else
                 {
                     // this measurement items (stepped frequency response) need frequency information also
-
-                    if (seq.Meas.Name == "Stepped Frequency Sweep" && seq.Path.Name == "main_mic")
+                    if (seq.Path.Name == "main_mic")
                     {
-                        for (int i = 0; i < gCountFrequencyPoint; i++)
+                        if (seq.Meas.Name == "Stepped Frequency Sweep")
                         {
-                            sw.Write(gMeasureValueSweepLeft[i].ToString("F3") + "\t");
-                            //sw.Write(gMeasureValueSweepRight[i].ToString("F3") + "\t");
+                            for (int i = 0; i < gCountFrequencyPoint; i++)
+                            {
+                                sw.Write(gMeasureValueSweepLeft[i].ToString("F3") + "\t");
+                                //sw.Write(gMeasureValueSweepRight[i].ToString("F3") + "\t");
+                            }
+                        }
+
+                        if (seq.Meas.Name == "Frequency Response")
+                        {
+                            for (int i = 0; i < gCountFrequencyPoint; i++)
+                            {
+                                sw.Write(gMeasureValueSweepLeft[i].ToString("F3") + "\t");
+                                //sw.Write(gMeasureValueSweepRight[i].ToString("F3") + "\t");
+                            }
                         }
                     }
-
-                    if (seq.Meas.Name == "Frequency Response" )
+                    else if (seq.Path.Name == "sub_mic")
                     {
-                        for (int i = 0; i < gCountFrequencyPoint; i++)
+                        if (seq.Meas.Name == "Stepped Frequency Sweep")
                         {
-                            sw.Write(gMeasureValueSweepLeft[i].ToString("F3") + "\t");
-                            //sw.Write(gMeasureValueSweepRight[i].ToString("F3") + "\t");
+                            for (int i = 0; i < gCountFrequencyPoint; i++)
+                            {
+                                sw.Write(gMeasureValueSweepSub[i].ToString("F3") + "\t");
+                                //sw.Write(gMeasureValueSweepRight[i].ToString("F3") + "\t");
+                            }
+                        }
+
+                        if (seq.Meas.Name == "Frequency Response")
+                        {
+                            for (int i = 0; i < gCountFrequencyPoint; i++)
+                            {
+                                sw.Write(gMeasureValueSweepSub[i].ToString("F3") + "\t");
+                                //sw.Write(gMeasureValueSweepRight[i].ToString("F3") + "\t");
+                            }
                         }
                     }
                 }
