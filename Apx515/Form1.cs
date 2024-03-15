@@ -1350,6 +1350,24 @@ namespace Apx515
 
                             for (i = 0; i < j; i++)
                             {
+                                /* TWIG2 CHECK */
+                                //testButton->Trace(TR_BLUE, "%02X", readData[i]);
+                                /*if ((j - i) > 2) // check length : (j - current position) > 2 : to read header 0x05, 0x5B
+                                {
+                                    if (needProc[i] == 0x05 && needProc[i + 1] == 0x5B)
+                                    {
+                                        if (((j - i) - 4) >= ((needProc[i + 3] * 256) + (needProc[i + 2]))) // check length : (j - current position - 4) >= response length : length is payload size so need to minus 4 byte (header, length) to avoid meet getting wrong memory address
+                                        {
+                                            if (needProc[i + 4] == 0x01 && needProc[i + 5] == 0x11)
+                                            {
+                                                bFoundResponse = true;
+                                                status = needProc[i + 6];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }*/
+
                                 /* ATH-CKS50TW2 CHECK */
                                 if ((j - i) > 2) // check length : (j - current position) > 2 : to read header 0x05, 0x5B
                                 {
@@ -1408,7 +1426,8 @@ namespace Apx515
             int status = 0;
 
             UInt32 numBytesWritten = 0;
-        
+
+            //byte[] cmd_run_test = new byte[] { 0x05, 0x5A, 0x04, 0x00, 0x01, 0x77, 0xEE, 0x07, 0xF0 }; // TWIG2
             byte[] cmd_run_test = new byte[] { 0x05, 0x5A, 0x04, 0x00, 0x01, 0x00, 0x0B, 0x02 }; // ATH-CKS50TW2
 
             FTDI.FT_STATUS ftStatus = FTDI.FT_STATUS.FT_OK;
@@ -1535,6 +1554,24 @@ namespace Apx515
 
                             for (i = 0; i < j; i++)
                             {
+                                /* TWIG2 CHECK */
+                                //testButton->Trace(TR_BLUE, "%02X", readData[i]);
+                                /*if ((j - i) > 2) // check length : (j - current position) > 2 : to read header 0x05, 0x5B
+                                {
+                                    if (needProc[i] == 0x05 && needProc[i + 1] == 0x5B)
+                                    {
+                                        if (((j - i) - 4) >= ((needProc[i + 3] * 256) + (needProc[i + 2]))) // check length : (j - current position - 4) >= response length : length is payload size so need to minus 4 byte (header, length) to avoid meet getting wrong memory address
+                                        {
+                                            if (needProc[i + 4] == 0x01 && needProc[i + 5] == 0x11)
+                                            {
+                                                bFoundResponse = true;
+                                                status = needProc[i + 6];
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }*/
+
                                 /* ATH-CKS50TW2 CHECK */
                                 if ((j - i) > 2) // check length : (j - current position) > 2 : to read header 0x05, 0x5B
                                 {
