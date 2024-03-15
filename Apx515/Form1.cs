@@ -1,4 +1,5 @@
 ﻿#define xREAD_BD_ADDR_BEFORE_TEST
+#define releasev1
 
 using System;
 using System.Collections.Generic;
